@@ -46,6 +46,14 @@ exports.isUrlInList = function(url, callback) {
 };
 
 exports.addUrlToList = function(url, callback) {
+  // open sites.txt
+  fs.appendFile(exports.paths.list, url + '\n', (err) => {
+    if (err) {
+      console.error(err);
+    }
+    // use fs.open with 'a' flag to add the ur;
+    callback(url);
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
