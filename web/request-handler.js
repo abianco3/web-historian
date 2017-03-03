@@ -22,10 +22,18 @@ exports.handleRequest = function (req, res) {
         }
       });
     } else {
-      utils.serveAssets(res, '/index.html');
+      var asset = path.join(archive.paths.siteAssets, '/index.html'); 
+      utils.serveAssets(res, asset, function(err, data) {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end(data);
+      });
     }
   } else if (req.url === '/styles.css') {
-    utils.serveAssets(res, '/styles.css');
+    var asset = path.join(archive.paths.siteAssets, '/styles.css'); 
+    utils.serveAssets(res, asset, function(err, data) {
+      res.writeHead(200, {'Content-Type': 'text/css'});
+      res.end(data);
+    });
   }
 
   //res.end(archive.paths.list);

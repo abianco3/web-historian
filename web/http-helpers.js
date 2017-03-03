@@ -1,6 +1,7 @@
 var path = require('path');
 var fs = require('fs');
 var archive = require('../helpers/archive-helpers');
+var qs = require('../node_modules/qs/dist/qs');
 
 exports.headers = {
   'access-control-allow-origin': '*',
@@ -13,17 +14,40 @@ exports.headers = {
 exports.serveAssets = function(res, asset, callback) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
-  // css, or anything that doesn't change often.)
-  var type = path.extname(asset).slice(1);
-  fs.readFile(archive.paths.siteAssets + asset, function(err, data) {
-    res.writeHead(200, {'Content-Type': 'text/' + type});
-    res.end(data);
-  });
+  // css, or anything that doesn't change often.
+  fs.readFile(asset, callback);
 };
 
 exports.serveSite = function(res, siteUrl, callback) {
-  res.writeHead(200, exports.headers);
-  res.end(siteUrl);
+  var url = qs.parse(siteUrl).url;
+  // check if site is archived
+  archive.isUrlArchived(url, function(isArchived) {
+    if (isArchived) {
+      var asset = archive.paths.archivedSites + '/' + url;
+      exports.serveAssets(res, asset, function(err, data) {
+        res.writeHead(302, {'Content-Type': 'text/html'});
+        res.end(data);
+      });
+    } else {
+      archive.isUrlInList(url, function(isInList) {
+        if (!isInList) {
+          archive.addUrlToList(url, function() {
+            console.log('hello');
+          });
+        }
+        var asset = path.join(archive.paths.siteAssets, '/loading.html');
+        exports.serveAssets(res, asset, function(err, data) {
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.end(data);
+        });  
+      });
+    }
+  });
+    // if yes send to client
+    // if no check if it is in list to be archived
+      // if yes send loading page
+      // if no add to list
+        // send loading page
 };
 
 

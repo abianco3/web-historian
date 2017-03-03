@@ -53,7 +53,7 @@ exports.addUrlToList = function(url, callback) {
       console.error(err);
     }
     // use fs.open with 'a' flag to add the ur;
-    callback(url);
+    callback();
   });
 };
 
