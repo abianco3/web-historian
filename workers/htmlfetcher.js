@@ -4,9 +4,9 @@ var CronJob = require('../node_modules/cron/lib/cron').CronJob;
 
 var archive = require('../helpers/archive-helpers');
 
-new CronJob('1 * * * *', () => {
+new CronJob('* * * * *', () => {
   archive.readListOfUrls(function(urls) {
     archive.downloadUrls(urls);
   });
-}, null, false, 'America/Los_Angeles');
+}, null, true, 'America/Los_Angeles');
 

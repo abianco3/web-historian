@@ -2,6 +2,7 @@ var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var fs = require('fs');
 var utils = require('../web/http-helpers');
+var url = require('url');
 // require more modules/folders here!
 
 
@@ -33,6 +34,8 @@ exports.handleRequest = function (req, res) {
     utils.serveAssets(res, asset, function(err, data) {
       utils.sendResponse(res, 200, {'Content-Type': 'text/css'}, data);
     });
+  } else {
+    utils.serveSite(res, req.url);
   }
 
   //res.end(archive.paths.list);
