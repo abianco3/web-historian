@@ -74,33 +74,44 @@ exports.isUrlArchived = function(url, callback) {
 exports.downloadUrls = function(urls) {
   // iterate through the urls
   urls.forEach((url) => {
-    console.log(url);
-    // make a get request to the url
-    http.get('http://' + url, (res) => {
-      var statusCode = res.statusCode;
-      if (statusCode !== 200) {
-        console.error('invalid request');
-      } else {
-        // on success, write the response body to a file in the archive list
-        var file = '';
-        res.on('data', (chunk) => file += chunk);
-        res.on('end', () => {
-          // create archived file and write contents
-          fs.open(exports.paths.archivedSites + '/' + url, 'w', (err, fd) => {
-            if (err) {
-              console.error(err);
-            } else {
-              fs.write(fd, file, (err) => {
+    exports.isUrlArchived(url, function(isArchived) {
+      console.log(url);
+      if (!isArchived) {
+        http.get('http://' + url, (res) => {
+          var statusCode = res.statusCode;
+          if (statusCode !== 200) {
+            console.error('invalid request', statusCode);
+          } else {
+            // on success, write the response body to a file in the archive list
+            var file = '';
+            res.setEncoding('utf8');
+            res.on('data', (chunk) => {
+              console.log(chunk);
+              file += chunk;
+            });
+            res.on('end', () => {
+              // create archived file and write contents
+              console.log('we made it');
+              fs.open(exports.paths.archivedSites + '/' + url, 'w', (err, fd) => {
                 if (err) {
                   console.error(err);
+                } else {
+                  fs.write(fd, file, (err) => {
+                    if (err) {
+                      console.error(err);
+                    }
+                  });
                 }
               });
-            }
-          });
+            });
+            res.on('error', (err) => {
+              console.log(err);
+            });
+          }
         });
       }
-
     });
+    // make a get request to the url
 
   });
 };

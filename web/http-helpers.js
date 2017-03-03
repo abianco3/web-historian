@@ -25,7 +25,7 @@ exports.serveSite = function(res, siteUrl, callback) {
     if (isArchived) {
       var asset = archive.paths.archivedSites + '/' + url;
       exports.serveAssets(res, asset, function(err, data) {
-        res.writeHead(302, {'Content-Type': 'text/html'});
+        res.writeHead(200, {'Content-Type': 'text/html'});
         res.end(data);
       });
     } else {
@@ -37,7 +37,7 @@ exports.serveSite = function(res, siteUrl, callback) {
         }
         var asset = path.join(archive.paths.siteAssets, '/loading.html');
         exports.serveAssets(res, asset, function(err, data) {
-          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.writeHead(302, {'Content-Type': 'text/html'});
           res.end(data);
         });  
       });
