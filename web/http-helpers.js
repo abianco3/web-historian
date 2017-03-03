@@ -18,6 +18,11 @@ exports.serveAssets = function(res, asset, callback) {
   fs.readFile(asset, callback);
 };
 
+exports.sendResponse = function(res, status, headers, message) {
+  res.writeHead(status, headers);
+  res.end(message);
+};
+
 exports.serveSite = function(res, siteUrl, callback) {
   var url = qs.parse(siteUrl).url;
   // check if site is archived
@@ -25,8 +30,7 @@ exports.serveSite = function(res, siteUrl, callback) {
     if (isArchived) {
       var asset = archive.paths.archivedSites + '/' + url;
       exports.serveAssets(res, asset, function(err, data) {
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(data);
+        exports.sendResponse(res, 200, {'Content-Type': 'text/html'}, data);
       });
     } else {
       archive.isUrlInList(url, function(isInList) {
@@ -37,8 +41,7 @@ exports.serveSite = function(res, siteUrl, callback) {
         }
         var asset = path.join(archive.paths.siteAssets, '/loading.html');
         exports.serveAssets(res, asset, function(err, data) {
-          res.writeHead(302, {'Content-Type': 'text/html'});
-          res.end(data);
+          exports.sendResponse(res, 200, {'Content-Type': 'text/html'}, data);
         });  
       });
     }

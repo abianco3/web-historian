@@ -4,6 +4,7 @@ var fs = require('fs');
 var utils = require('../web/http-helpers');
 // require more modules/folders here!
 
+
 exports.handleRequest = function (req, res) {
     
   if (req.url === '/') {
@@ -24,15 +25,13 @@ exports.handleRequest = function (req, res) {
     } else {
       var asset = path.join(archive.paths.siteAssets, '/index.html'); 
       utils.serveAssets(res, asset, function(err, data) {
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(data);
+        utils.sendResponse(res, 200, {'Content-Type': 'text/html'}, data);
       });
     }
   } else if (req.url === '/styles.css') {
     var asset = path.join(archive.paths.siteAssets, '/styles.css'); 
     utils.serveAssets(res, asset, function(err, data) {
-      res.writeHead(200, {'Content-Type': 'text/css'});
-      res.end(data);
+      utils.sendResponse(res, 200, {'Content-Type': 'text/css'}, data);
     });
   }
 

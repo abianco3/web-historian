@@ -31,7 +31,7 @@ exports.readListOfUrls = function(callback) {
     if (err) {
       console.error(err);
     } else {
-      callback(data.split('\n'));      
+      callback(data.split('\n').slice(1));      
     }
   });
 };
@@ -48,7 +48,7 @@ exports.isUrlInList = function(url, callback) {
 
 exports.addUrlToList = function(url, callback) {
   // open sites.txt
-  fs.appendFile(exports.paths.list, url + '\n', (err) => {
+  fs.appendFile(exports.paths.list, '\n' + url, (err) => {
     if (err) {
       console.error(err);
     }
@@ -86,7 +86,6 @@ exports.downloadUrls = function(urls) {
             var file = '';
             res.setEncoding('utf8');
             res.on('data', (chunk) => {
-              console.log(chunk);
               file += chunk;
             });
             res.on('end', () => {
